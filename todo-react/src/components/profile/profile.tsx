@@ -1,10 +1,15 @@
 import { FC, ReactElement } from "react";
 import { Avatar, Box, Typography } from "@mui/material"
 
-export const Profile: FC = (): ReactElement => {
-    // Avatar
-    // Name
-    // Wlecome message
+interface IProfile {
+    name?: string;
+}
+
+export const Profile: FC<IProfile> = (props): ReactElement => {
+    
+    // Destructure props
+    const { name = "Alba" } = props;
+
     return (
         <Box
             display="flex"
@@ -21,11 +26,11 @@ export const Profile: FC = (): ReactElement => {
                 }}
             >
                 <Typography variant="h4" color="text.primary">
-                    A
+                    {`${name.substring(0,1)}`}
                 </Typography>
             </Avatar>
             <Typography variant="h6" color="text.primary">
-                Welcome, Alba
+                {`Welcome, ${name}`}
             </Typography>
             <Typography variant="body1" color="text.primary">
                 This is your personal task manager
