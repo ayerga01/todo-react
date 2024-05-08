@@ -7,7 +7,7 @@ import {
   Alert,
   AlertTitle,
 } from "@mui/material";
-import { FC, ReactElement, useState } from "react";
+import { FC, ReactElement, useEffect, useState } from "react";
 import { TaskTitleField } from "./_taskTitleField";
 import { TaskDescriptionField } from "./_taskDescriptionField";
 import { TaskDateField } from "./_taskDateField";
@@ -17,6 +17,7 @@ import { Priority } from "./enums/Priority";
 import { useMutation } from "@tanstack/react-query";
 import { sendApiRequest } from "../../helpers/sendApiRequest";
 import { ICreateTask } from "../taskArea/interfaces/ICreateTask";
+import { SnackbarUtilities } from "../../helpers/snackbarManager";
 
 export const CreateTaskForm: FC = (): ReactElement => {
   // Declare states
@@ -25,6 +26,7 @@ export const CreateTaskForm: FC = (): ReactElement => {
   const [date, setDate] = useState<Date | null>(new Date());
   const [status, setStatus] = useState<string>(Status.todo);
   const [priority, setPriority] = useState<string>(Priority.normal);
+  const [showSuccess, setShowSuccess] = useState<boolean>(false);
 
   // Create task mutation
   const createTaskMutation = useMutation({
@@ -48,6 +50,19 @@ export const CreateTaskForm: FC = (): ReactElement => {
     createTaskMutation.mutate(task);
   }
 
+  // Manage side effects
+  useEffect(() => {
+    if (createTaskMutation.isSuccess) {
+      setShowSuccess(true);
+    }
+
+    const successTimeout = setTimeout(() => {
+      setShowSuccess(false);
+    }, 3000);
+
+    return () => clearTimeout(successTimeout);
+  }, [createTaskMutation.isSuccess]);
+
   return (
     <Box
       display="flex"
@@ -57,28 +72,39 @@ export const CreateTaskForm: FC = (): ReactElement => {
       px={4}
       my={6}
     >
-      {/* <Alert>
-        <AlertTitle sx={{ width: "100%", marginBottom: "16px" }}>
-          Success
-        </AlertTitle>
-        The task has been created successfully
-      </Alert> */}
+      {showSuccess && (
+        <Alert>
+          <AlertTitle sx={{ width: "100%", marginBottom: "16px" }}>
+            Success
+          </AlertTitle>
+          The task has been created successfully
+        </Alert>
+      )}
 
       <Typography mb={2} component="h2" variant="h6">
         Create A Task
       </Typography>
 
       <Stack sx={{ width: "100%" }} spacing={2}>
-        <TaskTitleField onChange={(e) => setTitle(e.target.value)} />
+        <TaskTitleField
+          disabled={createTaskMutation.isPending}
+          onChange={(e) => setTitle(e.target.value)}
+        />
 
         <TaskDescriptionField
+          disabled={createTaskMutation.isPending}
           onChange={(e) => setDescription(e.target.value)}
         />
 
-        <TaskDateField value={date} onChange={(date) => setDate(date)} />
+        <TaskDateField
+          disabled={createTaskMutation.isPending}
+          value={date}
+          onChange={(date) => setDate(date)}
+        />
 
         <Stack sx={{ width: "100%" }} direction="row" spacing={2}>
           <TaskSelectField
+            disabled={createTaskMutation.isPending}
             label="Status"
             name="status"
             value={status}
@@ -93,6 +119,7 @@ export const CreateTaskForm: FC = (): ReactElement => {
           />
 
           <TaskSelectField
+            disabled={createTaskMutation.isPending}
             label="Priority"
             name="priority"
             value={priority}
@@ -110,8 +137,12 @@ export const CreateTaskForm: FC = (): ReactElement => {
             ]}
           />
         </Stack>
-        <LinearProgress />
-        <Button onClick={createTaskHandler} variant="contained">
+        {createTaskMutation.isPending && <LinearProgress />}
+        <Button
+          disabled={!title} //as date, status and priority are set by default, we only need to activate the button when we write the tittle (required)
+          onClick={createTaskHandler}
+          variant="contained"
+        >
           Create A Task
         </Button>
       </Stack>
