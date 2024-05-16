@@ -25,14 +25,14 @@ export const TaskFooter: FC<ITaskFooter> = (props): ReactElement => {
         label="In Progress"
         control={
           <Switch
-            onChange={(e) => onStatusChange(e)}
+            onChange={(e) => onStatusChange(e, id)}
             color="warning"
             defaultChecked={status === Status.inProgress}
           />
         }
       />
       <Button
-        onClick={(e) => onClick(e)}
+        onClick={(e) => onClick(e, id)}
         variant="contained"
         color="success"
         size="small"
