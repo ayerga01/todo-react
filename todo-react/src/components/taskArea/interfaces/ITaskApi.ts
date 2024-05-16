@@ -6,6 +6,7 @@ export interface ITaskApi {
   data: string;
   title: string;
   description: string;
+  date: Date;
   status: `${Status}`;
   priority: `${Priority}`;
 }

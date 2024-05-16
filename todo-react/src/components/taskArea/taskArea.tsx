@@ -6,6 +6,7 @@ import { Task } from "../task/task";
 import { useQuery } from "@tanstack/react-query";
 import { sendApiRequest } from "../../helpers/sendApiRequest";
 import { ITaskApi } from "./interfaces/ITaskApi";
+import { Status } from "../createTaskForm/enums/Status";
 
 export const TaskArea: FC = (): ReactElement => {
   const { error, isLoading, data, refetch } = useQuery({
@@ -42,21 +43,42 @@ export const TaskArea: FC = (): ReactElement => {
           <TaskCounter />
         </Grid>
         <Grid item display="flex" flexDirection="column" md={8} xs={10}>
-          {error && (
-            <Alert severity="error">
-              There was an error fetching your tasks
-            </Alert>
-          )}
+          <>
+            {error && (
+              <Alert severity="error">
+                There was an error fetching your tasks
+              </Alert>
+            )}
 
-          {!error && Array.isArray(data) && data.length === 0 && (
-            <Alert severity="warning">
-              You do not have any tasks created yet
-            </Alert>
-          )}
+            {!error && Array.isArray(data) && data.length === 0 && (
+              <Alert severity="warning">
+                You do not have any tasks created yet
+              </Alert>
+            )}
 
-          <Task id="123" />
-          <Task id="123" />
-          <Task id="123" />
+            {isLoading ? (
+              <LinearProgress />
+            ) : (
+              Array.isArray(data) &&
+              data.length > 0 &&
+              data.map((each, index) => {
+                return each.status === Status.todo ||
+                  each.status === Status.inProgress ? (
+                  <Task
+                    key={index + each.priority}
+                    id={each.id}
+                    title={each.title}
+                    description={each.description}
+                    priority={each.priority}
+                    status={each.status}
+                    date={new Date(each.date)}
+                  />
+                ) : (
+                  false
+                );
+              })
+            )}
+          </>
         </Grid>
       </Grid>
     </Grid>
