@@ -75,15 +75,6 @@ export const CreateTaskForm: FC = (): ReactElement => {
       px={4}
       my={6}
     >
-      {showSuccess && (
-        <Alert>
-          <AlertTitle sx={{ width: "100%", marginBottom: "16px" }}>
-            Success
-          </AlertTitle>
-          The task has been created successfully
-        </Alert>
-      )}
-
       <Typography mb={2} component="h2" variant="h6">
         Create A Task
       </Typography>
@@ -142,12 +133,18 @@ export const CreateTaskForm: FC = (): ReactElement => {
         </Stack>
         {createTaskMutation.isPending && <LinearProgress />}
         <Button
-          disabled={!title} //as date, status and priority are set by default, we only need to activate the button when we write the tittle (required)
+          disabled={!title || !description} //as date, status and priority are set by default, we only need to activate the button when we write the tittle and description (required)
           onClick={createTaskHandler}
           variant="contained"
         >
           Create A Task
         </Button>
+        {showSuccess && (
+          <Alert>
+            <AlertTitle sx={{ width: "100%" }}>Success</AlertTitle>
+            The task has been created successfully
+          </Alert>
+        )}
       </Stack>
     </Box>
   );
