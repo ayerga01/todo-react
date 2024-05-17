@@ -1,5 +1,5 @@
 import { Box, Grid, Alert, LinearProgress } from "@mui/material";
-import { FC, ReactElement } from "react";
+import { FC, ReactElement, useContext, useEffect } from "react";
 // import { format } from "date-fns";
 import { TaskCounter } from "../taskCounter/taskCounter";
 import { Task } from "../task/task";
@@ -9,8 +9,11 @@ import { ITaskApi } from "./interfaces/ITaskApi";
 import { Status } from "../createTaskForm/enums/Status";
 import { IUpdateTask } from "../createTaskForm/interfaces/IUpdateTask";
 import { countTasks } from "./helpers/countTasks";
+import { TaskStatusChangedContext } from "../../context";
 
 export const TaskArea: FC = (): ReactElement => {
+  const tasksUpdatedContext = useContext(TaskStatusChangedContext);
+
   const { error, isLoading, data, refetch } = useQuery({
     queryKey: ["tasks"],
     queryFn: async () => {
@@ -49,6 +52,16 @@ export const TaskArea: FC = (): ReactElement => {
     });
     console.log(id);
   }
+
+  useEffect(() => {
+    refetch();
+  }, [tasksUpdatedContext.updated]);
+
+  useEffect(() => {
+    if (updateTaskMutation.isSuccess) {
+      tasksUpdatedContext.toggle();
+    }
+  }, [updateTaskMutation.isSuccess]);
 
   return (
     <Grid item md={8} px={4}>

@@ -7,7 +7,7 @@ import {
   Alert,
   AlertTitle,
 } from "@mui/material";
-import { FC, ReactElement, useEffect, useState } from "react";
+import { FC, ReactElement, useContext, useEffect, useState } from "react";
 import { TaskTitleField } from "./_taskTitleField";
 import { TaskDescriptionField } from "./_taskDescriptionField";
 import { TaskDateField } from "./_taskDateField";
@@ -18,6 +18,7 @@ import { useMutation } from "@tanstack/react-query";
 import { sendApiRequest } from "../../helpers/sendApiRequest";
 import { ICreateTask } from "../taskArea/interfaces/ICreateTask";
 import { SnackbarUtilities } from "../../helpers/snackbarManager";
+import { TaskStatusChangedContext } from "../../context";
 
 export const CreateTaskForm: FC = (): ReactElement => {
   // Declare states
@@ -27,6 +28,7 @@ export const CreateTaskForm: FC = (): ReactElement => {
   const [status, setStatus] = useState<string>(Status.todo);
   const [priority, setPriority] = useState<string>(Priority.normal);
   const [showSuccess, setShowSuccess] = useState<boolean>(false);
+  const tasksUpdatedContext = useContext(TaskStatusChangedContext);
 
   // Create task mutation
   const createTaskMutation = useMutation({
@@ -54,6 +56,7 @@ export const CreateTaskForm: FC = (): ReactElement => {
   useEffect(() => {
     if (createTaskMutation.isSuccess) {
       setShowSuccess(true);
+      tasksUpdatedContext.toggle();
     }
 
     const successTimeout = setTimeout(() => {
