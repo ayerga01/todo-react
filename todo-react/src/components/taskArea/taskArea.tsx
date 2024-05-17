@@ -36,6 +36,19 @@ export const TaskArea: FC = (): ReactElement => {
     });
   }
 
+  function markCompleteHandler(
+    e:
+      | React.MouseEvent<HTMLButtonElement>
+      | React.MouseEvent<HTMLAnchorElement>,
+    id: string
+  ) {
+    updateTaskMutation.mutate({
+      id,
+      status: Status.completed,
+    });
+    console.log(id);
+  }
+
   return (
     <Grid item md={8} px={4}>
       <Box mb={8} px={4}>
@@ -90,6 +103,7 @@ export const TaskArea: FC = (): ReactElement => {
                     status={each.status}
                     date={new Date(each.date)}
                     onStatusChange={onStatusChangeHandler}
+                    onClick={markCompleteHandler}
                   />
                 ) : (
                   false
