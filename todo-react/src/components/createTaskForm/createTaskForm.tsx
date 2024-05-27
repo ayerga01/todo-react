@@ -33,7 +33,12 @@ export const CreateTaskForm: FC = (): ReactElement => {
   // Create task mutation
   const createTaskMutation = useMutation({
     mutationFn: (data: ICreateTask) =>
-      sendApiRequest("http://localhost:3200/tasks", "POST", data),
+      sendApiRequest(
+        // "http://localhost:3200/tasks",
+        "https://localhost:7200/Tasks",
+        "POST",
+        data
+      ),
   });
 
   function createTaskHandler() {

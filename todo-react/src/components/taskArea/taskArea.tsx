@@ -18,7 +18,8 @@ export const TaskArea: FC = (): ReactElement => {
     queryKey: ["tasks"],
     queryFn: async () => {
       return await sendApiRequest<ITaskApi[]>(
-        "http://localhost:3200/tasks",
+        //"http://localhost:3200/tasks",
+        "https://localhost:7200/Tasks",
         "GET"
       );
     },
@@ -27,7 +28,12 @@ export const TaskArea: FC = (): ReactElement => {
   //update task mutation
   const updateTaskMutation = useMutation({
     mutationFn: (data: IUpdateTask) =>
-      sendApiRequest("http://localhost:3200/tasks", "PUT", data),
+      sendApiRequest(
+        // "http://localhost:3200/tasks",
+        "https://localhost:7200/Tasks",
+        "PUT",
+        data
+      ),
   });
 
   function onStatusChangeHandler(
